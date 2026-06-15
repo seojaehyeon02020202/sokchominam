@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSEPR 분자 조립 물질화 시뮬레이터</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Left) -->
+        <aside class="sidebar">
+            <!-- App Header -->
+            <header class="app-header">
+                <h1>VSEPR <span>Simulator</span></h1>
+                <p class="app-subtitle">전자쌍 반발 이론과 분자의 구조</p>
+            </header>
+
+            <!-- Mode Selector (Apple HIG Segmented Control) -->
+            <div class="mode-selector">
+                <button id="tab-build" class="mode-tab active">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> 분자 설계
+                </button>
+                <button id="tab-quiz" class="mode-tab">
+                    <i class="fa-solid fa-circle-question"></i> 미니 퀴즈
+                </button>
+            </div>
+
+            <!-- PANEL 1: ASSEMBLY MODE (Active on Start) -->
+            <div id="panel-assembly" class="side-panel active">
+                <!-- Element Palette -->
+                <section class="section-palette">
+                    <h3 class="section-title"><i class="fa-solid fa-layer-group"></i> 원소 팔레트</h3>
+                    
+                    <div class="palette-subgroup">
+                        <span class="subgroup-label">원소를 드래그하거나 클릭하여 슬롯에 배치하세요</span>
+                        <div class="palette-grid" id="palette-atoms">
+                            <div class="palette-item atom-H" draggable="true" data-element="H" data-type="atom" id="palette-atom-H">
+                                <span class="symbol">H</span>
+                                <span class="name">수소</span>
+                            </div>
+                            <div class="palette-item atom-Be" draggable="true" data-element="Be" data-type="atom" id="palette-atom-Be">
+                                <span class="symbol">Be</span>
+                                <span class="name">베릴륨</span>
+                            </div>
+                            <div class="palette-item atom-B" draggable="true" data-element="B" data-type="atom" id="palette-atom-B">
+                                <span class="symbol">B</span>
+                                <span class="name">붕소</span>
+                            </div>
+                            <div class="palette-item atom-C" draggable="true" data-element="C" data-type="atom" id="palette-atom-C">
+                                <span class="symbol">C</span>
+                                <span class="name">탄소</span>
+                            </div>
+                            <div class="palette-item atom-N" draggable="true" data-element="N" data-type="atom" id="palette-atom-N">
+                                <span class="symbol">N</span>
+                                <span class="name">질소</span>
+                            </div>
+                            <div class="palette-item atom-O" draggable="true" data-element="O" data-type="atom" id="palette-atom-O">
+                                <span class="symbol">O</span>
+                                <span class="name">산소</span>
+                            </div>
+                            <div class="palette-item atom-F" draggable="true" data-element="F" data-type="atom" id="palette-atom-F">
+                                <span class="symbol">F</span>
+                                <span class="name">플루오린</span>
+                            </div>
+                            <div class="palette-item atom-P" draggable="true" data-element="P" data-type="atom" id="palette-atom-P">
+                                <span class="symbol">P</span>
+                                <span class="name">인</span>
+                            </div>
+                            <div class="palette-item atom-S" draggable="true" data-element="S" data-type="atom" id="palette-atom-S">
+                                <span class="symbol">S</span>
+                                <span class="name">황</span>
+                            </div>
+                            <div class="palette-item atom-Cl" draggable="true" data-element="Cl" data-type="atom" id="palette-atom-Cl">
+                                <span class="symbol">Cl</span>
+                                <span class="name">염소</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2D Assembly Board -->
+                <section class="section-board">
+                    <h3 class="section-title"><i class="fa-solid fa-puzzle-piece"></i> 2D 분자 조립 판</h3>
+                    <div class="assembly-board">
+                        <!-- Connecting Line SVGs behind slots -->
+                        <svg class="board-lines" viewBox="0 0 200 200">
+                            <line x1="100" y1="35" x2="100" y2="165" stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-dasharray="4,4" />
+                            <line x1="35" y1="100" x2="165" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-dasharray="4,4" />
+                        </svg>
+
+                        <!-- Central Slot -->
+                        <div class="board-slot slot-central" id="slot-central" data-slot="central">
+                            <span class="slot-placeholder">중심<br>원소</span>
+                        </div>
+
+                        <!-- Outer Slots -->
+                        <div class="board-slot slot-cardinal slot-top" id="slot-top" data-slot="top">
+                            <span class="slot-placeholder">+</span>
+                        </div>
+                        <div class="board-slot slot-cardinal slot-bottom" id="slot-bottom" data-slot="bottom">
+                            <span class="slot-placeholder">+</span>
+                        </div>
+                        <div class="board-slot slot-cardinal slot-left" id="slot-left" data-slot="left">
+                            <span class="slot-placeholder">+</span>
+                        </div>
+                        <div class="board-slot slot-cardinal slot-right" id="slot-right" data-slot="right">
+                            <span class="slot-placeholder">+</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-hints">
+                        <p><i class="fa-solid fa-info-circle"></i> 원소를 드래그하여 슬롯에 떨어뜨리세요.</p>
+                        <p><i class="fa-solid fa-info-circle"></i> 배치된 주변 원소의 [X]를 누르면 결합이 끊어집니다.</p>
+                    </div>
+                </section>
+
+                <!-- Complete Button -->
+                <div class="assembly-actions" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <button id="btn-complete" class="neon-btn" disabled>
+                        <i class="fa-solid fa-atom"></i> 분자 만들기 완료 (물질화)
+                    </button>
+                    <button id="btn-clear-board" class="secondary-btn">
+                        <i class="fa-solid fa-trash-can"></i> 조립판 초기화
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL 2: EXPLORATION & ANALYSIS MODE (Hidden on Start) -->
+            <div id="panel-explore" class="side-panel">
+                <!-- Info cards / Dashboard -->
+                <section class="section-dashboard">
+                    <h3 class="section-title"><i class="fa-solid fa-chart-bar"></i> 물질 정보 분석</h3>
+                    <div class="dashboard-cards">
+                        <div class="dashboard-row">
+                            <div class="info-card" id="card-formula">
+                                <span class="card-header">화학식</span>
+                                <span class="card-body formula-text">-</span>
+                            </div>
+                            <div class="info-card" id="card-name">
+                                <span class="card-header">분자 이름</span>
+                                <span class="card-body name-text">-</span>
+                            </div>
+                            <div class="info-card" id="card-angle">
+                                <span class="card-header">실제 결합각</span>
+                                <span class="card-body angle-text">-</span>
+                            </div>
+                        </div>
+                        <div class="dashboard-row">
+                            <div class="info-card" id="card-eg">
+                                <span class="card-header">전자쌍 기하구조</span>
+                                <span class="card-body">-</span>
+                            </div>
+                            <div class="info-card" id="card-mg">
+                                <span class="card-header">분자 기하구조</span>
+                                <span class="card-body font-highlight">-</span>
+                            </div>
+                            <div class="info-card" id="card-polarity">
+                                <span class="card-header">분자 극성</span>
+                                <span class="card-body polarity-badge badge-nonpolar">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2D Diagrams Section -->
+                <section class="diagrams-section">
+                    <div class="diagram-tab-headers">
+                        <span id="diagram-tab-lewis" class="active"><i class="fa-solid fa-circle-dot"></i> 2D 루이스 식</span>
+                        <span id="diagram-tab-wedge"><i class="fa-solid fa-bezier-curve"></i> 2D 투영도 (Wedge)</span>
+                    </div>
+                    <div class="diagrams-container">
+                        <!-- Lewis structure -->
+                        <div class="diagram-box active" id="box-lewis">
+                            <svg id="svg-lewis" viewBox="0 0 200 200"></svg>
+                        </div>
+                        <!-- Wedge-Dash structure -->
+                        <div class="diagram-box" id="box-wedge">
+                            <svg id="svg-wedge" viewBox="0 0 200 200"></svg>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Rebuild Actions -->
+                <div class="explore-actions">
+                    <button id="btn-rebuild" class="secondary-btn">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> 다시 조립하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL 3: MINI QUIZ MODE (Hidden on Start) -->
+            <div id="panel-quiz" class="side-panel">
+                <section class="section-quiz">
+                    <div class="quiz-header">
+                        <h3 class="section-title"><i class="fa-solid fa-graduation-cap"></i> 화학 개념 퀴즈</h3>
+                        <div class="quiz-progress-container">
+                            <div class="quiz-progress-bar-bg">
+                                <div class="quiz-progress-bar" id="quiz-progress-bar" style="width: 0%;"></div>
+                            </div>
+                            <span class="quiz-progress-text" id="quiz-progress-text">문제 1 / 5</span>
+                        </div>
+                    </div>
+
+                    <!-- Question & Options Card -->
+                    <div class="quiz-card" id="quiz-main-card">
+                        <p class="quiz-question" id="quiz-question">질문을 불러오는 중...</p>
+                        <div class="quiz-options" id="quiz-options">
+                            <!-- Options dynamically injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Box (Hidden on load) -->
+                    <div class="quiz-feedback-box hidden" id="quiz-feedback-box">
+                        <div class="feedback-header">
+                            <span id="feedback-icon"></span>
+                            <h4 id="feedback-title">정답입니다!</h4>
+                        </div>
+                        <p class="feedback-explanation" id="feedback-explanation">상세 화학 구조 해설이 들어갑니다.</p>
+                        <button id="btn-next-question" class="neon-btn">
+                            다음 문제 <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Results Screen (Hidden on load) -->
+                    <div class="quiz-results hidden" id="quiz-results">
+                        <div class="results-score-circle">
+                            <span class="score-num" id="results-score-num">0</span>
+                            <span class="score-total">/ 5</span>
+                        </div>
+                        <h3 id="results-message">수고하셨습니다!</h3>
+                        <p id="results-desc">퀴즈가 완료되었습니다.</p>
+                        <button id="btn-restart-quiz" class="neon-btn">
+                            <i class="fa-solid fa-rotate-left"></i> 다시 도전하기
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </aside>
+
+        <!-- Main Display (Right) -->
+        <main class="viewport-container">
+            <!-- 3D Canvas Container -->
+            <div id="canvas-container">
+                <!-- Three.js will inject canvas here -->
+                <div class="loading-overlay" id="loading">
+                    <div class="spinner"></div>
+                    <p>3D 연구실 부팅 중...</p>
+                </div>
+            </div>
+
+            <!-- Blueprint Scanner Overlay (Only active during assembly) -->
+            <div id="blueprint-overlay" class="blueprint-overlay active">
+                <div class="blueprint-grid"></div>
+                <div class="blueprint-scanline"></div>
+                <div class="blueprint-message">
+                    <div class="blueprint-icon"><i class="fa-solid fa-microchip"></i></div>
+                    <h2>3D 분자 설계 시스템</h2>
+                    <p id="blueprint-status">좌측 조립판에 중심 원소를 배치해 주세요.</p>
+                </div>
+            </div>
+
+            <!-- Floating Exploration HUD (Hidden during assembly) -->
+            <div id="explore-hud" class="explore-hud">
+                <div class="hud-top">
+                    <div class="status-indicator" id="octet-indicator">
+                        <div class="status-circle"></div>
+                        <span class="status-text">옥텟 규칙 판별 중...</span>
+                    </div>
+                    <div class="view-toggles">
+                        <button id="toggle-orbitals" class="view-toggle-btn active">
+                            <i class="fa-solid fa-eye"></i> 비공유 전자쌍 표시
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hud-bottom">
+                    <div class="controls-hint">
+                        <i class="fa-solid fa-hand-pointer animate-hand"></i> 마우스 드래그로 회전 | 휠로 줌
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Octet Warning Modal -->
+    <div id="octet-warning-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h2>아직 옥텟 규칙이 만족되지 않았습니다!</h2>
+            <p id="octet-warning-desc">현재 중심 원자 주변의 전자는 6개입니다. (옥텟 규칙 만족을 위해 8전자 배치가 필요합니다.)</p>
+            <div class="modal-actions">
+                <button id="btn-modal-continue" class="neon-btn">계속 조립하기</button>
+                <button id="btn-modal-ignore" class="secondary-btn">그래도 완료하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="molecule3d.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
